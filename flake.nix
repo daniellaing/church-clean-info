@@ -29,6 +29,7 @@
             datetime
             fancyhdr
             geometry
+            hyperref
             kpfonts
             nth
             # --- Transative dependencies
@@ -46,7 +47,7 @@
         document = pkgs.stdenvNoCC.mkDerivation rec {
           pname = "ba-church-clean-info";
           version = self.shortRev or "dirty";
-          src = ./.;
+          src = self;
 
           SOURCE_DATE_EPOCH = "${toString self.lastModified}";
 
