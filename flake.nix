@@ -26,16 +26,19 @@
             latex-bin
             latexmk
             # --- Dependencies
+            datetime
             geometry
             kpfonts
             nth
             # --- Transative dependencies
             amsmath # nth
+            fmtcount # datetime
             fontspec # kpfonts
             kpfonts-otf # kpfonts
             lualatex-math # nth
             realscripts # kpfonts
             unicode-math # nth
+            xkeyval # datetime
             ;
         };
 
