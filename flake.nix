@@ -40,7 +40,7 @@
 
         document = pkgs.stdenvNoCC.mkDerivation {
           pname = "ba-church-clean-info";
-          version = "0";
+          version = self.shortRev or "dirty";
           src = self;
 
           SOURCE_DATE_EPOCH = "${toString self.lastModified}";
