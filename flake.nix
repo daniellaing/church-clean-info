@@ -27,6 +27,7 @@
             latexmk
             # --- Dependencies
             datetime
+            fancyhdr
             geometry
             kpfonts
             nth
@@ -42,10 +43,10 @@
             ;
         };
 
-        document = pkgs.stdenvNoCC.mkDerivation {
+        document = pkgs.stdenvNoCC.mkDerivation rec {
           pname = "ba-church-clean-info";
           version = self.shortRev or "dirty";
-          src = self;
+          src = ./.;
 
           SOURCE_DATE_EPOCH = "${toString self.lastModified}";
 
@@ -53,6 +54,11 @@
             tex
             pkgs.writableTmpDirAsHomeHook
           ];
+
+          preBuild = ''
+            substituteInPlace main.tex --replace-fail "\version{version}" "\version{${version}}";
+            cat main.tex
+          '';
 
           installPhase = ''
             mkdir -p $out
