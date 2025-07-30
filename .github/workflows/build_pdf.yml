@@ -1,0 +1,33 @@
+name: Build PDF document
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build_pdf:
+    name: Build PDF document
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Free disk space
+        uses: wimpysworld/nothing-but-nix@v6
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+        with:
+          use-gha-cache: enabled
+
+      - name: Build PDF
+        run: nix build .
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cleaning Info.pdf
+          path: result/main.pdf
+
