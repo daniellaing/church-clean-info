@@ -44,27 +44,32 @@
             ;
         };
 
-        document = pkgs.stdenvNoCC.mkDerivation rec {
-          pname = "ba-church-clean-info";
-          version = self.shortRev or "dirty";
-          src = self;
+        document = pkgs.callPackage ({
+          stdenvNoCC,
+          writableTmpDirAsHomeHook,
+          version ? self.shortRev or "dirty",
+        }:
+          stdenvNoCC.mkDerivation rec {
+            inherit version;
+            pname = "ba-church-clean-info";
+            src = self;
 
-          SOURCE_DATE_EPOCH = "${toString self.lastModified}";
+            SOURCE_DATE_EPOCH = "${toString self.lastModified}";
 
-          buildInputs = [
-            tex
-            pkgs.writableTmpDirAsHomeHook
-          ];
+            buildInputs = [
+              tex
+              writableTmpDirAsHomeHook
+            ];
 
-          preBuild = ''
-            substituteInPlace main.tex --replace-fail "\version{version}" "\version{${version}}";
-          '';
+            preBuild = ''
+              substituteInPlace main.tex --replace-fail "\version{}" "\version{${version}}";
+            '';
 
-          installPhase = ''
-            mkdir -p $out
-            cp main.pdf $out/Cleaning\ Info.pdf
-          '';
-        };
+            installPhase = ''
+              mkdir -p $out
+              cp main.pdf $out/Cleaning\ Info.pdf
+            '';
+          }) {};
       in {
         packages = {
           inherit document;
