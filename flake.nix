@@ -26,6 +26,7 @@
             latex-bin
             latexmk
             # --- Dependencies
+            geometry
             kpfonts
             nth
             # --- Transative dependencies
