@@ -57,12 +57,11 @@
 
           preBuild = ''
             substituteInPlace main.tex --replace-fail "\version{version}" "\version{${version}}";
-            cat main.tex
           '';
 
           installPhase = ''
             mkdir -p $out
-            cp main.pdf $out/
+            cp main.pdf $out/Cleaning\ Info.pdf
           '';
         };
       in {

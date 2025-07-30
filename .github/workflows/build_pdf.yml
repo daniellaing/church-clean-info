@@ -28,6 +28,6 @@ jobs:
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: Cleaning Info.pdf
-          path: result/main.pdf
+          name: Cleaning Info
+          path: result/Cleaning\ Info.pdf
 
