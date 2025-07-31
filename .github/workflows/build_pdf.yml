@@ -31,3 +31,7 @@ jobs:
           name: Cleaning Info
           path: result/Cleaning\ Info.pdf
 
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
+        with:
+          folder: result
