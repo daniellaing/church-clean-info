@@ -10,10 +10,13 @@
 \usepackage{fancyhdr}
 \usepackage{datetime}
 \usepackage{hyperref}
+\usepackage{graphicx}
 
 \newcommand\version{}
 
-\newcommand\email[1]{\href{mailto:#1}{\underline{#1}}}
+\renewcommand\maketitle{%
+    \hfill\includegraphics[width=0.8\textwidth]{title_img.png}\hfill%
+}
 
 
 \pagestyle{fancy}
@@ -23,9 +26,10 @@
 \fancyfoot[R]{\tiny\shortdate\today\hspace*{1em}\version}
 \fancypagestyle{plain}{}
 
+\newcommand\email[1]{\href{mailto:#1}{\underline{#1}}}
 
 \begin{document}
-\maketitle
+\maketitle{}
 
 \section*{Before you start}
 \begin{description}

@@ -29,11 +29,13 @@
             datetime
             fancyhdr
             geometry
+            graphics
             hyperref
             kpfonts
             nth
             # --- Transative dependencies
             amsmath # nth
+            epstopdf-pkg # graphics
             fmtcount # datetime
             fontspec # kpfonts
             kpfonts-otf # kpfonts
