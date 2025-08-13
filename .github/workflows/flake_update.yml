@@ -1,0 +1,87 @@
+name: Update flake inputs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1" # 2am every Monday
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update_flake:
+    runs-on: ubuntu-latest
+    env:
+      pr_branch: update/${{ github.ref_name }}
+      base_branch: ${{ github.ref_name }}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+        with:
+          use-gha-cache: enabled
+
+      - name: Switch branch
+        run: |
+          git branch -D "$pr_branch" || echo "No existing update branch found"
+          git switch -c "$pr_branch"
+
+      - name: Update flake
+        run: nix flake update --commit-lock-file
+
+      - name: Check if there are differences
+        id: diff
+        run: |
+          diff=( $(git diff --cached --name-only origin/$base_branch) )
+          if [[ -n "$diff" ]]; then
+            echo "${#diff[@]} files different to $remote"
+            for file in "${diff[@]}"; do
+              echo "- $file"
+            done
+            echo "count=${#diff[@]}" >> $GITHUB_OUTPUT
+          else
+            echo "No files are different to $remote"
+          fi
+
+      - name: Check flake
+        if: steps.diff.outputs.count
+        run: nix flake check
+
+      - name: Build flake
+        if: steps.diff.outputs.count
+        run: nix build
+
+      - name: Create and merge PR
+        if: steps.diff.outputs.count
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Pushing to branch $pr_branch"
+          git push --set-upstream origin "$pr_branch"
+
+          echo "Writing PR body file"
+          (
+            echo "# Automatic flake update on $(date -I)"
+            echo
+            echo '```'
+            git show --no-patch --format=%b
+            echo '```'
+          ) > body.md
+
+          PR=$(gh pr create --base "$base_branch" --title "Auto update $(date -I)" --body-file body.md --label bot --assignee daniellaing)
+          gh pr merge "$PR" --rebase --delete-branch
+
