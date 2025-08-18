@@ -40,6 +40,11 @@ jobs:
           git branch -D "$pr_branch" || echo "No existing update branch found"
           git switch -c "$pr_branch"
 
+      - name: Fetch branch
+        run: |
+          git fetch origin "$pr_branch"
+          git branch --set-upstream-to "origin/$pr_branch"
+
       - name: Update flake
         run: nix flake update --commit-lock-file
 
