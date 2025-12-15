@@ -34,7 +34,7 @@ jobs:
           path: result/Cleaning\ Info.pdf
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.7.4
+        uses: JamesIves/github-pages-deploy-action@v4.7.6
         with:
           folder: result
           clean-exclude: |
